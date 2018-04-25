@@ -7,7 +7,7 @@ entity FilterCounter is
         enable_in, reset_in, clk_c, filter_size_in : in std_logic;
         done_out  : out std_logic
     );
-  end entity FilterCounter;
+end entity FilterCounter;
   
 architecture arch of FilterCounter is
 signal count_s : unsigned(2 downto 0);

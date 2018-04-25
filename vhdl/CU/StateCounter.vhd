@@ -7,7 +7,7 @@ entity StateCounter is
         enable_in, reset_in, clk_c, stride_in : in std_logic;
         read_write_ram_out  : out std_logic
     );
-  end entity StateCounter;
+end entity StateCounter;
 
 architecture StateCounter_arch of StateCounter is
 signal count_s : unsigned (2 downto 0) := (others => '0');

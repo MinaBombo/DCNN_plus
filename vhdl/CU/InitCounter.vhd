@@ -4,7 +4,7 @@ use ieee.numeric_std.all;
 
 entity InitCounter is
     port (
-        enable_in, reset_in, clk_c, filter_size_in : in std_logic;
+        enable_in, reset_in, clk_c : in std_logic;
         done_out : out std_logic
     );
 end entity InitCounter;
