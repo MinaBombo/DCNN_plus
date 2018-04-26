@@ -4,10 +4,10 @@ use ieee.numeric_std.all;
 
 entity WriteAddressCounter is
     port (
-        enable_in, reset_in, clk_c,filter_size_in : in std_logic;
+        enable_in, reset_in, clk_c : in std_logic;
         address_out  : out unsigned(17 downto 0)
     );
-  end entity WriteAddressCounter;
+end entity WriteAddressCounter;
 
 
 architecture write_address_counter_arch of WriteAddressCounter is

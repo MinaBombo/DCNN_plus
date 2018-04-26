@@ -5,7 +5,7 @@ use ieee.numeric_std.all;
 entity CU is
     port (
         enable_in, reset_in, clk_c, filter_size_in, stride_in : in std_logic;
-        read_write_ram_out, increment_out, filter_cache_enable_out, data_cache_enable_out, alu_enable_out : out std_logic
+        read_write_ram_out, increment_out, enable_dma_out, enable_ram_out, filter_cache_enable_out, data_cache_enable_out, alu_enable_out : out std_logic
     );
   end entity CU;
   
@@ -40,5 +40,14 @@ begin
 
     read_write_ram_out <= state_read_write_ram_s when filter_done_s = '1' and init_done_s = '1'
                      else '1';
+    increment_out <= '0' when filter_size_in ='0' and filter_done_s = '0'
+                else '1';
+    enable_dma_out <= enable_in;
+    enable_ram_out <= enable_in;
+    filter_cache_enable_out <= not filter_done_s;
+    data_cache_enable_out <= state_read_write_ram_s when filter_done_s = '1' and init_done_s = '1'
+                        else '1'                    when filter_done_s = '1' and init_done_s = '0'
+                        else '0';
+    alu_enable_out <= '0'; -- TODO Check this after adding the ALU
     
 end architecture arch;

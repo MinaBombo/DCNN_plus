@@ -8,7 +8,7 @@ entity ReadAddressCounter is
 
         address_out  : out unsigned(17 downto 0)
     );
-  end entity ReadAddressCounter;
+end entity ReadAddressCounter;
   
 architecture arch of ReadAddressCounter is
 signal count_s : unsigned(17 downto 0) := (others => '0');
