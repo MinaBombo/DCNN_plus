@@ -17,17 +17,18 @@ architecture arch of RAM is
 -- Ram size = 256*256*2 + 5*5
 type ram_t is array(262143 downto 0) of byte_t;
 signal ram_memory_s : ram_t;
+signal data_out_s : window_row_t;
 begin
-    process (enable_in, clk_c, read_write_in)
+    Data_Out_S_Generate: for i in 0  to 4 generate
+        data_out_s(i) <= ram_memory_s(to_integer(address_in+i));
+    end generate Data_Out_S_Generate;
+
+    process (enable_in, clk_c, read_write_in, data_out_s)
     begin
         if (rising_edge(clk_c)) then
             if (enable_in = '1') then
                 if (read_write_in = '1') then
-                    data_out(0) <= ram_memory_s(to_integer(address_in));
-                    data_out(1) <= ram_memory_s(to_integer(address_in+1));
-                    data_out(2) <= ram_memory_s(to_integer(address_in+2));
-                    data_out(3) <= ram_memory_s(to_integer(address_in+3));
-                    data_out(4) <= ram_memory_s(to_integer(address_in+4));
+                    data_out <= data_out_s;
                 else 
                     ram_memory_s(to_integer(address_in)) <= data_in;
                 end if;

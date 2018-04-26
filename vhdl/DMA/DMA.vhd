@@ -4,7 +4,7 @@ use ieee.numeric_std.all;
 
 entity DMA is
     port (
-        enable_in, reset_in, clk_c, increment_select_in, read_write_in : in std_logic;
+        enable_in, reset_in, clk_c, increment_select_in, read_write_in, stride_in, init_done_in : in std_logic;
 
         address_out : out unsigned(17 downto 0)
     );
@@ -13,7 +13,7 @@ end entity DMA;
 architecture DMA_arch of DMA is
     component ReadAddressCounter is
         port (
-            enable_in, reset_in, clk_c, increment_select_in : in std_logic;
+            enable_in, reset_in, clk_c, increment_select_in, stride_in, init_done_in : in std_logic;
             address_out  : out unsigned(17 downto 0)
         );
     end component ReadAddressCounter; 
@@ -30,7 +30,8 @@ architecture DMA_arch of DMA is
 begin
 
     Read_Address_Counter  : ReadAddressCounter port map     (enable_in => read_enable_s, reset_in => reset_in,
-                                                            clk_c => clk_c, increment_select_in => increment_select_in, 
+                                                            clk_c => clk_c, increment_select_in => increment_select_in,
+                                                            stride_in => stride_in, init_done_in => init_done_in, 
                                                             address_out => read_address_output_s);
 
     Write_Address_Counter : WriteAddressCounter port map    (enable_in => write_enable_s , reset_in => reset_in, clk_c => clk_c,
