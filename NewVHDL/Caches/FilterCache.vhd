@@ -7,6 +7,7 @@ use work.DataTypes.all;
 entity FilterCache is
     port (
         enable_in, reset_in, clk_c, filter_size_in : in std_logic;
+        index_in : in integer range 0 to 4;
         data_in : in window_row_t;
         filter_out : out window_t
     );
@@ -23,7 +24,6 @@ begin
     corrected_data_in_s(2) <= data_in(2) when filter_size_in = FILTER_SIZE_FIVE else data_in(1);
     corrected_data_in_s(3) <= data_in(3) when filter_size_in = FILTER_SIZE_FIVE else data_in(2);
     corrected_data_in_s(4) <= data_in(4) when filter_size_in = FILTER_SIZE_FIVE else (others => '0');
-    offset_s <= 0 when filter_size_in = FILTER_SIZE_FIVE else 1;
     process (enable_in, reset_in, clk_c)
     begin
         if (reset_in = '1') then
@@ -31,8 +31,7 @@ begin
             index_s <= 0;
         elsif (rising_edge(clk_c)) then
             if (enable_in = '1') then
-                filter_s(index_s+offset_s) <= corrected_data_in_s;
-                index_s <= index_s + 1;
+                filter_s(index_in) <= corrected_data_in_s;
             end if;
         end if;
     end process;

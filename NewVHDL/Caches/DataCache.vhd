@@ -6,8 +6,8 @@ use work.DataTypes.all;
 
 entity DataCache is
   port (
-      clk_c, enable_in, reset_in, stride_in, read_write_in, should_increment_in : in std_logic;
-      window_index_in, window_row_index_in : integer range 0 to 255;
+      clk_c, enable_in, reset_in, stride_in, read_write_in : in std_logic;
+      window_index_in, window_row_index_in : in integer range 0 to 255;
       data_in : in window_row_t;
       window_out : out window_t
   ) ;
@@ -76,7 +76,6 @@ begin
     end generate New_Input_Generate;
     
     process (clk_c, enable_in, read_write_in)
-
     begin
 
         if (enable_in = '1' and read_write_in = WRITE_OPERATION) then

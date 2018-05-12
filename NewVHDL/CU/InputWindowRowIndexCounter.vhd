@@ -4,21 +4,15 @@ use ieee.std_logic_1164.all;
 library work;
 use work.DataTypes.all;
 
-entity WindowRowIndexCounter is
+entity InputWindowRowIndexCounter is
     port (
         clk_c, enable_in, reset_in : in std_logic;
-        --Why Stride in???
-        stride_in : in std_logic;
 
         window_row_index_out : out integer range 0 to 255
   ) ;
+end InputWindowRowIndexCounter;
 
-    
-
-end WindowRowIndexCounter;
-
-
-architecture window_row_index_counter_arch of WindowRowIndexCounter is
+architecture input_window_row_index_counter_arch of InputWindowRowIndexCounter is
     
     signal window_row_index_s : integer range 0 to 255;
 
@@ -41,4 +35,4 @@ begin
 
     window_row_index_out <= window_row_index_s;
 
-end window_row_index_counter_arch ; -- window_row_index_counter_arch
+end input_window_row_index_counter_arch ; -- input_window_row_index_counter_arch
