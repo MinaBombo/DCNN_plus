@@ -32,15 +32,11 @@ architecture data_cache_arch of DataCache is
       ) ;    
     end component;
     component nBitsDecoder is
-        generic (
-            n : integer;
-            selection_range : integer
-        );
         port (
             enable_in : in std_logic;
-            selection_in : in integer range 0 to selection_range ;
+            selection_in : in integer range 0 to 259 ;
     
-            data_out : out std_logic_vector((2**n)-1 downto 0)
+            data_out : out std_logic_vector(255 downto 0)
         );
     end component;
 
@@ -71,27 +67,27 @@ begin
     end generate Data_Out_S_Row_Generate;
 
 
-    First_Bit_Shift_Decoder : nBitsDecoder generic map (n => 8,selection_range => 259) port map (
+    First_Bit_Shift_Decoder : nBitsDecoder port map (
         enable_in => '1', selection_in => window_row_index_s ,
         data_out => first_bit_shift_enable_s
     );
     window_index_plus_one <= window_row_index_s+1;
-    Second_Bit_Shift_Decoder : nBitsDecoder generic map (n => 8,selection_range => 259) port map (
+    Second_Bit_Shift_Decoder : nBitsDecoder port map (
         enable_in => '1', selection_in =>window_index_plus_one ,
         data_out => second_bit_shift_enable_s
     );
     window_index_plus_two <= window_row_index_s+2;
-    Third_Bit_Shift_Decoder : nBitsDecoder generic map (n => 8,selection_range => 259) port map (
+    Third_Bit_Shift_Decoder : nBitsDecoder port map (
         enable_in => '1', selection_in => window_index_plus_two ,
         data_out => third_bit_shift_enable_s
     );
     window_index_plus_three <= window_row_index_s+3;
-    Fourth_Bit_Shift_Decoder : nBitsDecoder generic map (n => 8,selection_range => 259) port map (
+    Fourth_Bit_Shift_Decoder : nBitsDecoder port map (
         enable_in => '1', selection_in => window_index_plus_three ,
         data_out => fourth_bit_shift_enable_s
     );
     window_index_plus_four <= window_row_index_s+4;
-    Fifth_Bit_Shift_Decoder : nBitsDecoder generic map (n => 8,selection_range => 259) port map (
+    Fifth_Bit_Shift_Decoder : nBitsDecoder port map (
         enable_in => '1', selection_in => window_index_plus_four ,
         data_out => fifth_bit_shift_enable_s
     );
