@@ -39,8 +39,8 @@ architecture data_cache_arch of DataCache is
 
 begin
     --Makes no sense belnsbaly, m4 el mfrod da fe le input counter, wla 2ee?
-    output_counter_enable_s <= should_increment_in;
-    input_counter_enable_s <= '1' when enable_in = '1' and read_write_in = WRITE_OPERATION else '0';
+    input_counter_enable_s <= should_increment_in;
+    output_counter_enable_s <= '1' when enable_in = '1' and read_write_in = READ_OPERATION else '0';
 
     OutputCounter : WindowIndexCounter port map ( clk_c => clk_c, enable_in => output_counter_enable_s, reset_in => reset_in,
                                                   stride_in => stride_in, 
@@ -62,17 +62,21 @@ begin
 
         if (enable_in = '1' and read_write_in = WRITE_OPERATION) then
             if (rising_edge(clk_c)) then
-                -- TODO add the throw-away logic
-                Input_Row_Loop: for i in 0 to 3 loop
-                    Input_Column_Loop: for j in 0 to 4 loop
-                        cache_s(i)(window_row_index_s + j) <= cache_s(i + 1)(window_row_index_s + j);
-                    end loop Input_Column_Loop;
-                end loop Input_Row_Loop;
-
-                New_Input_Loop: for i in 0 to 4 loop
-                    cache_s(4)(window_row_index_s + i) <= data_in(i);
-                end loop New_Input_Loop;
-
+                if(window_row_index_s = 255) then
+                    Single_Byte_Input_Shift_Loop: for i in 0 to 3 loop
+                        cache_s(i)(window_row_index_s) <= cache_s(i + 1)(window_row_index_s);
+                    end loop Single_Byte_Input_Shift_Loop;
+                    cache_s(4)(window_row_index_s) <= data_in(0);
+                else
+                    Input_Row_Loop: for i in 0 to 3 loop
+                        Input_Column_Loop: for j in 0 to 4 loop
+                            cache_s(i)(window_row_index_s + j) <= cache_s(i + 1)(window_row_index_s + j);
+                        end loop Input_Column_Loop;
+                    end loop Input_Row_Loop;
+                    New_Input_Loop: for i in 0 to 4 loop
+                        cache_s(4)(window_row_index_s + i) <= data_in(i);
+                    end loop New_Input_Loop;
+                end if;
             end if;
         end if;
 
