@@ -18,7 +18,7 @@ signal count_select_s : std_logic;
 signal other_count_select_s : std_logic;
 begin
 
-    --TODO what out to this sun of bitch condition
+    --TODO what out to this son of a biatch condition
     increment <= '1' & x"00" when stride_in = '1' and init_done_in = '1' and step_counter_s = x"FF"  
             else '0' & x"03" when increment_select_in = '0'
             else '0' & x"05"; 
