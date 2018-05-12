@@ -20,5 +20,17 @@ package DataTypes is
     constant READ_OPERATION : std_logic := '1';
     constant STRIDE_ONE : std_logic := '0';
     constant STRIDE_TWO : std_logic := '1';
+    constant FILTER_SIZE_FIVE : std_logic := '1';
+    constant FILTER_SIZE_THREE : std_logic := '0';
+    -- start_address = 256*256 + 25 = (65561)'10 = (10000000000011001)'2
+    constant WRITE_START_ADDRESS : integer := 65561;
+    constant READ_START_ADDRESS : integer := 0;
 
+    constant SHOULD_INCREMENT : std_logic := '1';
+    constant SHOULD_NOT_INCREMENT : std_logic := '0';
+    constant SELECT_NORMAL_ADDRESS : std_logic := '1';
+    constant SELECT_SHADOW_ADDRESS : std_logic := '0';
+
+    constant INCREMENT_THREE : std_logic := '0';
+    constant INCREMENT_FIVE : std_logic := '1';
 end package DataTypes;

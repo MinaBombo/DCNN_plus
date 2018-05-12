@@ -7,6 +7,7 @@ use work.DataTypes.all;
 entity DataCache is
   port (
       clk_c, enable_in, reset_in, stride_in, read_write_in, should_increment_in : in std_logic;
+      window_index_in, window_row_index_in : integer range 0 to 255;
       data_in : in window_row_t;
       window_out : out window_t
   ) ;
@@ -14,23 +15,6 @@ end DataCache;
 
 architecture data_cache_arch of DataCache is
 
-    component WindowIndexCounter is
-        port (
-            clk_c, enable_in, reset_in : in std_logic;
-            stride_in : in std_logic;
-    
-            window_index_out : out integer range 0 to 255
-      ) ;    
-    end component;
-
-    component WindowRowIndexCounter is
-        port (
-            clk_c, enable_in, reset_in : in std_logic;
-            stride_in : in std_logic;
-    
-            window_row_index_out : out integer range 0 to 255
-      ) ;    
-    end component;
     component nBitsDecoder is
         port (
             enable_in : in std_logic;
@@ -40,53 +24,39 @@ architecture data_cache_arch of DataCache is
         );
     end component;
 
-
     signal cache_s, shifted_cache_s : cache_t;
-    signal window_index_s, window_row_index_s : integer range 0 to 255;
-    signal input_counter_enable_s, output_counter_enable_s : std_logic;
     signal window_index_plus_one, window_index_plus_two, window_index_plus_three, window_index_plus_four : integer range 0 to 259;
     signal first_bit_shift_enable_s, second_bit_shift_enable_s, third_bit_shift_enable_s, fourth_bit_shift_enable_s, fifth_bit_shift_enable_s, all_bit_shit_enable_s : std_logic_vector(255 downto 0);
 
 begin
-    --Makes no sense belnsbaly, m4 el mfrod da fe le input counter, wla 2ee?
-    input_counter_enable_s <= should_increment_in;
-    output_counter_enable_s <= '1' when enable_in = '1' and read_write_in = READ_OPERATION else '0';
-
-    OutputCounter : WindowIndexCounter port map ( clk_c => clk_c, enable_in => output_counter_enable_s, reset_in => reset_in,
-                                                  stride_in => stride_in, 
-                                                  window_index_out => window_index_s );
-
-    InputCounter : WindowRowIndexCounter port map ( clk_c => clk_c, enable_in => input_counter_enable_s, reset_in => reset_in,
-                                                    stride_in => stride_in, 
-                                                    window_row_index_out => window_row_index_s );
 
     Data_Out_S_Row_Generate: for i in 0 to 4 generate
         Data_Out_S_Column_Generate: for j in 0 to 4 generate
-            window_out(i)(j) <= cache_s(i)(window_index_s + j);
+            window_out(i)(j) <= cache_s(i)(window_index_in + j);
         end generate Data_Out_S_Column_Generate;
     end generate Data_Out_S_Row_Generate;
 
 
     First_Bit_Shift_Decoder : nBitsDecoder port map (
-        enable_in => '1', selection_in => window_row_index_s ,
+        enable_in => '1', selection_in => window_row_index_in ,
         data_out => first_bit_shift_enable_s
     );
-    window_index_plus_one <= window_row_index_s+1;
+    window_index_plus_one <= window_row_index_in+1;
     Second_Bit_Shift_Decoder : nBitsDecoder port map (
-        enable_in => '1', selection_in =>window_index_plus_one ,
+        enable_in => '1', selection_in => window_index_plus_one ,
         data_out => second_bit_shift_enable_s
     );
-    window_index_plus_two <= window_row_index_s+2;
+    window_index_plus_two <= window_row_index_in+2;
     Third_Bit_Shift_Decoder : nBitsDecoder port map (
         enable_in => '1', selection_in => window_index_plus_two ,
         data_out => third_bit_shift_enable_s
     );
-    window_index_plus_three <= window_row_index_s+3;
+    window_index_plus_three <= window_row_index_in+3;
     Fourth_Bit_Shift_Decoder : nBitsDecoder port map (
         enable_in => '1', selection_in => window_index_plus_three ,
         data_out => fourth_bit_shift_enable_s
     );
-    window_index_plus_four <= window_row_index_s+4;
+    window_index_plus_four <= window_row_index_in+4;
     Fifth_Bit_Shift_Decoder : nBitsDecoder port map (
         enable_in => '1', selection_in => window_index_plus_four ,
         data_out => fifth_bit_shift_enable_s
