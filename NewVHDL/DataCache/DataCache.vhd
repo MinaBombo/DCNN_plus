@@ -100,11 +100,11 @@ begin
         end generate Input_Column_Generate;
     end generate Input_Row_Generate;
 
+
     New_Input_Generate: for i in 0 to 255 generate
-        shifted_cache_s(4)(i) <= data_in(i) when all_bit_shit_enable_s(i) = '1' else cache_s(4)(i);
+        shifted_cache_s(4)(i) <= data_in(i mod 5) when all_bit_shit_enable_s(i) = '1' else cache_s(4)(i);
     end generate New_Input_Generate;
     
-
     process (clk_c, enable_in, read_write_in)
 
     begin
