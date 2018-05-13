@@ -13,6 +13,9 @@ package DataTypes is
     constant NULL_BYTE : byte_t := 0;
     constant NULL_WINDOW_ROW : window_row_t := (others => NULL_BYTE);
     constant NULL_WINDOW : window_t := (others => NULL_WINDOW_ROW);
+    constant ONE_BYTE : byte_t := 1;
+    constant ONE_WINDOW_ROW : window_row_t := (others => ONE_BYTE);
+    constant ONE_WINDOW : window_t := (others => ONE_WINDOW_ROW);
     --From the point of view of whatever module it is in
     -- Read means that the module will output data
     -- Write means that the module will input data 
@@ -36,5 +39,8 @@ package DataTypes is
     constant STATE_READ : integer := 2;
     constant STATE_READ_AGAIN : integer := 3;
     constant STATE_DONE : integer := 4;
+
+    constant INSTRUCTION_CONVOLVE : std_logic := '0';
+    constant INSTRUCTION_POLL : std_logic := '1';
 
 end package DataTypes;

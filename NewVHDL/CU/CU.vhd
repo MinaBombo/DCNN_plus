@@ -6,7 +6,7 @@ use work.DataTypes.all;
 
 entity CU is
     port (
-        enable_in, reset_in, clk_c, filter_size_in, stride_in : in std_logic;
+        enable_in, reset_in, clk_c, filter_size_in, stride_in, instruction_in : in std_logic;
         data_cache_output_window_index_out, data_cache_input_window_row_index_out : out integer range 0 to 255;
         data_cache_enable_out, data_cache_read_write_out : out std_logic;
         --dma_read_write out = ram_read_write_out, dma_enable_out = ram_enable_out
@@ -74,7 +74,7 @@ begin
     
     filter_cache_index_out <= filter_index_s + filter_offset_s;
 
-     filter_counter_enable_s <= '0' when enable_in = '0' or filter_counter_done_s = '1' else '1';
+     filter_counter_enable_s <= '0' when enable_in = '0' or filter_counter_done_s = '1' or instruction_in = INSTRUCTION_POLL else '1' ;
 
      input_counter_enable_s <= initilization_state_input_counter_enable_s or general_state_input_counter_enable_s;
 

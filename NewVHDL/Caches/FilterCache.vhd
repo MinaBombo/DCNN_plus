@@ -6,7 +6,7 @@ use work.DataTypes.all;
 
 entity FilterCache is
     port (
-        enable_in, reset_in, clk_c, filter_size_in : in std_logic;
+        enable_in, reset_in, clk_c, filter_size_in, instruction_in : in std_logic;
         index_in : in integer range 0 to 4;
         data_in : in window_row_t;
         filter_out : out window_t
@@ -35,5 +35,5 @@ begin
             end if;
         end if;
     end process;
-    filter_out <= filter_s;
+    filter_out <= filter_s when instruction_in = INSTRUCTION_CONVOLVE else ONE_WINDOW;
 end architecture filter_cache_arch;
