@@ -3,14 +3,14 @@ use ieee.std_logic_1164.all;
 
 package DataTypes is
 
-    subtype byte_t is std_logic_vector(7 downto 0);
+    subtype byte_t is integer range 0 to 255;
     type window_row_t is array(4 downto 0) of byte_t; 
     type window_t is array(4 downto 0) of window_row_t; 
     type cache_row_t is array(255 downto 0) of byte_t; 
     type cache_t is array(4 downto 0) of cache_row_t;
 
     
-    constant NULL_BYTE : byte_t := (others => '0');
+    constant NULL_BYTE : byte_t := 0;
     constant NULL_WINDOW_ROW : window_row_t := (others => NULL_BYTE);
     constant NULL_WINDOW : window_t := (others => NULL_WINDOW_ROW);
     --From the point of view of whatever module it is in
@@ -33,4 +33,11 @@ package DataTypes is
 
     constant INCREMENT_THREE : std_logic := '0';
     constant INCREMENT_FIVE : std_logic := '1';
+
+    constant STATE_NONE : integer := 0;
+    constant STATE_WRITE : integer := 1;
+    constant STATE_READ : integer := 2;
+    constant STATE_READ_AGAIN : integer := 3;
+    constant STATE_DONE : integer := 4;
+
 end package DataTypes;

@@ -19,10 +19,12 @@ signal cache_s : cache_t;
 signal window_index_s, write_index_s, window_index_limit_s, window_index_increment_s : unsigned(7 downto 0);
 signal data_out_s : window_t;
 signal data_in_s : window_row_t;
+signal write_index_increment_s : unsigned(2 downto 0); --TODO add the logic of this bit
 begin
 
     Data_Out_S_Row_Generate: for i in 0 to 4 generate
         Data_Out_S_Column_Generate: for j in 0 to 4 generate
+            --TODO make the code wrap around
             data_out_s(i)(j) <= cache_s(i)(to_integer(window_index_s)+j);
         end generate Data_Out_S_Column_Generate;
     end generate Data_Out_S_Row_Generate;
@@ -36,6 +38,8 @@ begin
             cache_s <= (others => (others => NULL_BYTE));
             window_index_s <= (others => '0');
             write_index_s <= (others => '0');
+            --TODO what is the initial value
+            write_index_increment_s <= '';
         elsif (rising_edge(clk_c)) then
             if (enable_in = '1') then
                 if (read_write_in = '1') then
@@ -47,7 +51,9 @@ begin
                     end if;
                 else
                     data_in_s <= data_in;
-                    write_index_s <= write_index_s + 5;
+                    --TODO the counter must be incremented or not when stride = 2
+                    
+                    write_index_s <= write_index_s + write_index_increment_s;
                 end if;
             end if;
         end if;

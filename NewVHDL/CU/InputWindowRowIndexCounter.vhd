@@ -8,7 +8,8 @@ entity InputWindowRowIndexCounter is
     port (
         clk_c, enable_in, reset_in : in std_logic;
 
-        window_row_index_out : out integer range 0 to 255
+        window_row_index_out : out integer range 0 to 255;
+        done_out : out std_logic
   ) ;
 end InputWindowRowIndexCounter;
 
@@ -34,5 +35,6 @@ begin
     end process ; -- Counting_Logic
 
     window_row_index_out <= window_row_index_s;
+    done_out <= '1' when window_row_index_s = 255 else '0';
 
 end input_window_row_index_counter_arch ; -- input_window_row_index_counter_arch

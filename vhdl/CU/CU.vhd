@@ -1,7 +1,8 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
-
+--TODO invert the read write or do shit
+--TODO latch what need to be latched 
 entity CU is
     port (
         enable_in, reset_in, clk_c, filter_size_in, stride_in : in std_logic;

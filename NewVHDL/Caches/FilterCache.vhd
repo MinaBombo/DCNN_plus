@@ -13,17 +13,17 @@ entity FilterCache is
     );
 end entity FilterCache;
   
-architecture arch of FilterCache is
+architecture filter_cache_arch of FilterCache is
 signal corrected_data_in_s : window_row_t;
 signal filter_s : window_t;
 signal index_s : integer range 0 to 4;
 signal offset_s : integer range 0 to 1;
 begin
-    corrected_data_in_s(0) <= data_in(0) when filter_size_in = FILTER_SIZE_FIVE else (others => '0');
+    corrected_data_in_s(0) <= data_in(0) when filter_size_in = FILTER_SIZE_FIVE else 0;
     corrected_data_in_s(1) <= data_in(1) when filter_size_in = FILTER_SIZE_FIVE else data_in(0);
     corrected_data_in_s(2) <= data_in(2) when filter_size_in = FILTER_SIZE_FIVE else data_in(1);
     corrected_data_in_s(3) <= data_in(3) when filter_size_in = FILTER_SIZE_FIVE else data_in(2);
-    corrected_data_in_s(4) <= data_in(4) when filter_size_in = FILTER_SIZE_FIVE else (others => '0');
+    corrected_data_in_s(4) <= data_in(4) when filter_size_in = FILTER_SIZE_FIVE else 0;
     process (enable_in, reset_in, clk_c)
     begin
         if (reset_in = '1') then
@@ -36,4 +36,4 @@ begin
         end if;
     end process;
     filter_out <= filter_s;
-end architecture arch;
+end architecture filter_cache_arch;
