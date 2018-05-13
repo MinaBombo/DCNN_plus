@@ -13,8 +13,8 @@ entity CU is
         dma_enable_out, dma_read_write_out : out std_logic;
         filter_cache_enable_out : out std_logic;
         filter_cache_index_out : out integer range 0 to 4;
-        dma_increment_select_out : out std_logic;
-        alu_enable_out : out std_logic
+        dma_increment_out : out integer range 0 to 5;
+        alu_enable_out, done_out : out std_logic
     );
   end entity CU;
   
@@ -50,7 +50,7 @@ end component;
     signal output_window_index_s,input_window_row_index_s :  integer range 0 to 255;
     signal filter_index_s : integer range 0 to 4;
     signal filter_offset_s : integer range 0 to 1;
-    signal init_s : integer range 0 to 4;
+    signal init_s : integer range 0 to 5;
     signal state_s, new_state_s : integer range 0 to 4;
     signal num_lines_read_s : integer range 0 to 255;
 
@@ -68,7 +68,9 @@ begin
 
     filter_offset_s <= 0 when filter_size_in = FILTER_SIZE_FIVE else 1;
     
-    dma_increment_select_out <= INCREMENT_THREE when filter_counter_enable_s = '1' and filter_size_in = FILTER_SIZE_THREE else INCREMENT_FIVE;
+    dma_increment_out <= 3 when filter_counter_enable_s = '1' and filter_size_in = FILTER_SIZE_THREE
+                    else 1 when input_window_row_index_s = 255
+                    else 5;
     
     filter_cache_index_out <= filter_index_s + filter_offset_s;
 
@@ -76,7 +78,7 @@ begin
 
      input_counter_enable_s <= initilization_state_input_counter_enable_s or general_state_input_counter_enable_s;
 
-     initilization_state_input_counter_enable_s <= '0' when enable_in = '0' or filter_counter_enable_s = '1' or init_s = 4 else '1';
+     initilization_state_input_counter_enable_s <= '0' when enable_in = '0' or filter_counter_enable_s = '1' or init_s = 5 else '1';
      Init_Signal_Logic : process(clk_c, reset_in, input_window_row_index_s, initilization_state_input_counter_enable_s)
      begin
         if(reset_in = '1') then
@@ -91,9 +93,9 @@ begin
      general_state_input_counter_enable_s <= '1' when state_s = STATE_READ or state_s = STATE_READ_AGAIN else '0';
      output_counter_enable_s <= '1' when state_s = STATE_WRITE else '0';
 
-    new_state_s <= STATE_NONE       when init_s /= 4
+    new_state_s <= STATE_NONE       when init_s /= 5
               else STATE_DONE       when (state_s = STATE_WRITE and output_counter_done_s = '1' and ((stride_in = STRIDE_ONE and num_lines_read_s = 255) or (stride_in = STRIDE_TWO and num_lines_read_s = 254)))
-              else STATE_WRITE      when (state_s = STATE_NONE and init_s = 4)
+              else STATE_WRITE      when (state_s = STATE_NONE and init_s = 5)
                                       or (state_s = STATE_READ and stride_in = STRIDE_ONE and input_counter_done_s = '1')
                                       or (state_s = STATE_READ_AGAIN and stride_in = STRIDE_TWO and input_counter_done_s = '1')
               else STATE_READ       when (state_s = STATE_WRITE and output_counter_done_s = '1')
@@ -127,8 +129,8 @@ begin
     dma_enable_out <= output_counter_enable_s or input_counter_enable_s;
     dma_read_write_out <= READ_OPERATION when input_counter_enable_s = '1' else
                           WRITE_OPERATION when output_counter_enable_s = '1' else 'Z';
-    filter_cache_enable_out <= '1' when filter_counter_enable_s = '1';
-    filter_cache_index_out <= filter_index_s;
+    filter_cache_enable_out <= '1' when filter_counter_enable_s = '1' else '0';
     alu_enable_out <= output_counter_enable_s;
+    done_out <= '1' when state_s =  STATE_DONE else '0';
     
 end architecture cu_arch; --cu_arch

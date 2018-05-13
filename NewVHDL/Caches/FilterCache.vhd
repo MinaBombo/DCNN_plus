@@ -29,7 +29,7 @@ begin
         if (reset_in = '1') then
             filter_s <= NULL_WINDOW;
             index_s <= 0;
-        elsif (rising_edge(clk_c)) then
+        elsif (falling_edge(clk_c)) then
             if (enable_in = '1') then
                 filter_s(index_in) <= corrected_data_in_s;
             end if;

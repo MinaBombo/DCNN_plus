@@ -7,7 +7,8 @@ use work.DataTypes.all;
 
 entity DMA is
     port (
-        enable_in, reset_in, clk_c, increment_select_in, read_write_in : in std_logic;
+        enable_in, reset_in, clk_c, read_write_in : in std_logic;
+        increment_in : in integer range 0 to 5;
 
         address_out : out integer range 0 to 2**18
     );
@@ -16,8 +17,9 @@ end entity DMA;
 architecture DMA_arch of DMA is
     component ReadAddressCounter is
         port (
-            enable_in, reset_in, clk_c, increment_select_in : in std_logic;
-
+            enable_in, reset_in, clk_c : in std_logic;
+            increment_in : in integer range 0 to 5;
+    
             address_out  : out integer range 0 to 2**18
         );
     end component ReadAddressCounter; 
@@ -35,7 +37,7 @@ architecture DMA_arch of DMA is
 begin
 
     Read_Address_Counter  : ReadAddressCounter port map     (enable_in => read_enable_s, reset_in => reset_in,
-                                                            clk_c => clk_c, increment_select_in => increment_select_in, 
+                                                            clk_c => clk_c, increment_in => increment_in, 
                                                             address_out => read_address_output_s);
 
     Write_Address_Counter : WriteAddressCounter port map    (enable_in => write_enable_s , reset_in => reset_in, clk_c => clk_c,

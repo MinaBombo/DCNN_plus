@@ -7,7 +7,8 @@ use work.DataTypes.all;
 
 entity ReadAddressCounter is
     port (
-        enable_in, reset_in, clk_c, increment_select_in : in std_logic;
+        enable_in, reset_in, clk_c : in std_logic;
+        increment_in : in integer range 0 to 5;
 
         address_out  : out integer range 0 to 2**18
     );
@@ -15,19 +16,16 @@ end entity ReadAddressCounter;
   
 architecture arch of ReadAddressCounter is
 signal count_s : integer range 0 to 2**18;
-signal increment : integer range 0 to 256;
 begin
 
-    increment <= 3 when increment_select_in = INCREMENT_THREE
-                 else 5; 
 
-    process(enable_in, reset_in, clk_c)
+    process(enable_in, reset_in, clk_c, increment_in)
     begin 
         if(reset_in = '1') then
             count_s <= READ_START_ADDRESS;
         elsif(rising_edge(clk_c)) then 
             if(enable_in = '1') then 
-                count_s <= count_s + increment;
+                count_s <= count_s + increment_in;
             end if;
         end if;
     end process;

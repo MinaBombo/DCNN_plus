@@ -31,9 +31,6 @@ package DataTypes is
     constant SELECT_NORMAL_ADDRESS : std_logic := '1';
     constant SELECT_SHADOW_ADDRESS : std_logic := '0';
 
-    constant INCREMENT_THREE : std_logic := '0';
-    constant INCREMENT_FIVE : std_logic := '1';
-
     constant STATE_NONE : integer := 0;
     constant STATE_WRITE : integer := 1;
     constant STATE_READ : integer := 2;

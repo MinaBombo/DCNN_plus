@@ -17,7 +17,8 @@ end entity DCNN;
 architecture dcnn_arch of DCNN is 
 component DMA is
     port (
-        enable_in, reset_in, clk_c, increment_select_in, read_write_in : in std_logic;
+        enable_in, reset_in, clk_c, read_write_in : in std_logic;
+        increment_in : in integer range 0 to 5;
 
         address_out : out integer range 0 to 2**18
     );
@@ -31,8 +32,8 @@ component CU is
         dma_enable_out, dma_read_write_out : out std_logic;
         filter_cache_enable_out : out std_logic;
         filter_cache_index_out : out integer range 0 to 4;
-        dma_increment_select_out : out std_logic;
-        alu_enable_out : out std_logic
+        dma_increment_out : out integer range 0 to 5;
+        alu_enable_out, done_out : out std_logic
     );
 end component;
 component DataCache is
@@ -61,7 +62,7 @@ end component;
 signal data_cache_output_window_index_s, data_cache_input_window_row_index_s : integer range 0 to 255;
 signal data_cache_enable_s, data_cache_read_write_s, dma_enable_s,dma_read_write_s, filter_cache_enable_s, alu_enable_s : std_logic;
 signal filter_cache_index_s : integer range 0 to 4;
-signal dma_increment_select_s : std_logic;
+signal dma_increment_s :  integer range 0 to 5;
 signal window_s, filter_s : window_t;
 begin
 
@@ -73,15 +74,15 @@ begin
         dma_enable_out => dma_enable_s, dma_read_write_out => dma_read_write_s,
         filter_cache_enable_out => filter_cache_enable_s,
         filter_cache_index_out => filter_cache_index_s,
-        dma_increment_select_out => dma_increment_select_s,
-        alu_enable_out => alu_enable_s
+        dma_increment_out => dma_increment_s,
+        alu_enable_out => alu_enable_s, done_out => done_out
         );
 
     ram_read_write_out <= dma_read_write_s;
     ram_enable_out <= dma_enable_s;
 
     DMA_Instance : DMA port map(
-        enable_in => dma_enable_s, reset_in => reset_in, clk_c => clk_c, increment_select_in => dma_increment_select_s, read_write_in => dma_read_write_s,
+        enable_in => dma_enable_s, reset_in => reset_in, clk_c => clk_c, increment_in => dma_increment_s, read_write_in => dma_read_write_s,
         address_out => ram_address_out
     );
 

@@ -79,7 +79,7 @@ begin
     begin
 
         if (enable_in = '1' and read_write_in = WRITE_OPERATION) then
-            if (rising_edge(clk_c)) then
+            if (falling_edge(clk_c)) then
                 cache_s <= shifted_cache_s;
             end if;
         end if;
