@@ -52,7 +52,7 @@ end component;
     signal filter_offset_s : integer range 0 to 1;
     signal init_s : integer range 0 to 5;
     signal state_s, new_state_s : integer range 0 to 4;
-    signal num_lines_read_s : integer range 0 to 255;
+    signal num_lines_read_s : integer range 0 to 256;
 
 begin
 
@@ -94,7 +94,7 @@ begin
      output_counter_enable_s <= '1' when state_s = STATE_WRITE else '0';
 
     new_state_s <= STATE_NONE       when init_s /= 5
-              else STATE_DONE       when (state_s = STATE_WRITE and output_counter_done_s = '1' and ((stride_in = STRIDE_ONE and num_lines_read_s = 255) or (stride_in = STRIDE_TWO and num_lines_read_s = 254)))
+              else STATE_DONE       when (state_s = STATE_WRITE and output_counter_done_s = '1' and ((stride_in = STRIDE_ONE and num_lines_read_s = 256) or (stride_in = STRIDE_TWO and num_lines_read_s = 255)))
               else STATE_WRITE      when (state_s = STATE_NONE and init_s = 5)
                                       or (state_s = STATE_READ and stride_in = STRIDE_ONE and input_counter_done_s = '1')
                                       or (state_s = STATE_READ_AGAIN and stride_in = STRIDE_TWO and input_counter_done_s = '1')
