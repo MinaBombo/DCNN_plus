@@ -126,8 +126,8 @@ begin
     data_cache_enable_out <= output_counter_enable_s or input_counter_enable_s;
     data_cache_read_write_out <= WRITE_OPERATION when input_counter_enable_s = '1' else
                                  READ_OPERATION when output_counter_enable_s = '1' else 'Z';
-    dma_enable_out <= output_counter_enable_s or input_counter_enable_s;
-    dma_read_write_out <= READ_OPERATION when input_counter_enable_s = '1' else
+    dma_enable_out <= output_counter_enable_s or input_counter_enable_s or filter_counter_enable_s;
+    dma_read_write_out <= READ_OPERATION when input_counter_enable_s = '1' or filter_counter_enable_s = '1' else
                           WRITE_OPERATION when output_counter_enable_s = '1' else 'Z';
     filter_cache_enable_out <= '1' when filter_counter_enable_s = '1' else '0';
     alu_enable_out <= output_counter_enable_s;
