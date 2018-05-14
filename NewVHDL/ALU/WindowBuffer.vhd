@@ -7,18 +7,18 @@ use work.DataTypes.all;
 entity WindowBuffer is
 port(
     clk_c, reset_in , enable_in : in std_logic;
-    window_in : in window_t;
-    window_out : out window_t
+    window_in : in multiplication_window_t;
+    window_out : out multiplication_window_t
 );
 end entity WindowBuffer;
 
 architecture window_buffer_arch of WindowBuffer is
-signal window_s : window_t;
+signal window_s : multiplication_window_t;
 begin
     Latching_Logic : process (clk_c , reset_in)
     begin
         if(reset_in = '1') then
-            window_s <= NULL_WINDOW;
+            window_s <= NULL_MULTIPLIED_WINDOW;
         elsif(rising_edge(clk_c)) then
             if(enable_in = '1') then
                 window_s <= window_in;

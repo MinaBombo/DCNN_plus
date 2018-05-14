@@ -7,7 +7,7 @@ use work.DataTypes.all;
 entity Adder is
 port(
     
-    multiplied_window_in : in window_t;
+    multiplied_window_in : in multiplication_window_t;
     instruction_in, filter_size_in : in std_logic;
     pixel_out : out byte_t
 );

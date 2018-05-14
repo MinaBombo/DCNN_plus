@@ -9,7 +9,7 @@ port(
     
     window_in : in window_t;
     filter_in : in window_t;
-    multiplied_window_out : out window_t
+    multiplied_window_out : out multiplication_window_t
 );
 end entity Multiplier;
 

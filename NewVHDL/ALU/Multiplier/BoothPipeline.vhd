@@ -7,8 +7,8 @@ use work.DataTypes.all;
 entity BoothPipeline is
 port(
     clk_c, enable_in, reset_in : in std_logic;
-    first_operand_in, second_operand_in : in std_logic_vector(7 downto 0);
-    Result_out : in std_logic_vector(15 downto 0);
+    first_operand_in, second_operand_in : in byte_t;
+    Result_out : out word_t
 );
 end entity BoothPipeline;
 
@@ -17,7 +17,7 @@ component Booth is
 port(
     
     A_in, S_in, P_in : in std_logic_vector(16 downto 0);
-    A_out, S_out, P_out : in std_logic_vector(16 downto 0);
+    A_out, S_out, P_out : out std_logic_vector(16 downto 0)
 );
 end component;
 
@@ -25,7 +25,7 @@ component BoothBuffer is
 port(
     clk_c, enable_in, reset_in : in std_logic;
     A_in, S_in, P_in : in std_logic_vector(16 downto 0);
-    A_out, S_out, P_out : in std_logic_vector(16 downto 0);
+    A_out, S_out, P_out : out std_logic_vector(16 downto 0)
 );
 end component;
 signal A1_s, S1_s, P1_s : std_logic_vector(16 downto 0);
@@ -49,9 +49,9 @@ signal AB8_s, SB8_s, PB8_s : std_logic_vector(16 downto 0);
 begin
 
 
-    A1_s <= ( (16 downto to 9) => first_operand_in , others => '0' );
-    S1_s <= ( (16 downto to 9) => std_logic_vector(-signed(first_operand_in)), others => '0' );
-    P1_s <= ( (8 downto 1) => second_operand_in, others => '0' );
+    A1_s <= std_logic_vector(to_signed(first_operand_in,8)) & '0' & x"00";
+    S1_s <= std_logic_vector(-to_signed(first_operand_in,8)) & '0' & x"00";
+    P1_s <= x"00" & std_logic_vector(to_signed(second_operand_in,8)) & '0';
 
     Booth1 : Booth port map (
         A_in => A1_s, S_in => S1_s, P_in => P1_s,
@@ -141,6 +141,6 @@ begin
         A_out => A9_s, S_out => S9_s, P_out => P9_s
     );
 
-    Result_out <= P9_s(16 downto 1);
+    Result_out <= to_integer(signed(P9_s(16 downto 1)));
 
 end architecture booth_pipeline_arch;

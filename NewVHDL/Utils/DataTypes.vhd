@@ -3,16 +3,24 @@ use ieee.std_logic_1164.all;
 
 package DataTypes is
 
-    subtype byte_t is integer range 0 to 255;
+    subtype byte_t is integer range -128 to 127;
     type window_row_t is array(4 downto 0) of byte_t; 
     type window_t is array(4 downto 0) of window_row_t; 
     type cache_row_t is array(255 downto 0) of byte_t; 
     type cache_t is array(4 downto 0) of cache_row_t;
+    subtype word_t is integer range -32768 to 32767;
+    type multiplication_row_t is array(4 downto 0) of word_t; 
+    type multiplication_window_t is array(4 downto 0) of multiplication_row_t; 
 
     
     constant NULL_BYTE : byte_t := 0;
     constant NULL_WINDOW_ROW : window_row_t := (others => NULL_BYTE);
     constant NULL_WINDOW : window_t := (others => NULL_WINDOW_ROW);
+
+    constant NULL_WORD : word_t := 0;
+    constant NULL_MULTIPLIED_WINDOW_ROW : multiplication_row_t := (others => NULL_WORD);
+    constant NULL_MULTIPLIED_WINDOW : multiplication_window_t := (others => NULL_MULTIPLIED_WINDOW_ROW);
+
     constant ONE_BYTE : byte_t := 1;
     constant ONE_WINDOW_ROW : window_row_t := (others => ONE_BYTE);
     constant ONE_WINDOW : window_t := (others => ONE_WINDOW_ROW);
