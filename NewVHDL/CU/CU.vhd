@@ -103,7 +103,8 @@ begin
                                       or (state_s = STATE_READ and stride_in = STRIDE_ONE and input_counter_done_s = '1')
                                       or (state_s = STATE_READ_AGAIN and stride_in = STRIDE_TWO and input_counter_done_s = '1')
               else STATE_READ       when (state_s = STATE_WRITE and output_counter_done_s = '1')
-              else STATE_READ_AGAIN when (state_s = STATE_READ and input_counter_done_s = '1' and stride_in = STRIDE_TWO);
+              else STATE_READ_AGAIN when (state_s = STATE_READ and input_counter_done_s = '1' and stride_in = STRIDE_TWO)
+              else state_s;
 
     State_Singal_Logic : process( clk_c, reset_in)
     begin
