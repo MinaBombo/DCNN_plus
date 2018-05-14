@@ -51,8 +51,10 @@ end component;
     signal filter_index_s : integer range 0 to 4;
     signal filter_offset_s : integer range 0 to 1;
     signal init_s : integer range 0 to 5;
-    signal state_s, new_state_s : integer range 0 to 4;
+    signal state_s, new_state_s : integer range 0 to 6;
     signal num_lines_read_s : integer range 0 to 256;
+    signal num_population_cycles : integer range 0 to NUM_PIPELINE_STAGES+1;
+    signal num_flush_cylces : integer range 0 to NUM_PIPELINE_STAGES+1;
 
 begin
 
@@ -91,11 +93,13 @@ begin
      end process ; -- Init_Signal_Logic
 
      general_state_input_counter_enable_s <= '1' when state_s = STATE_READ or state_s = STATE_READ_AGAIN else '0';
-     output_counter_enable_s <= '1' when state_s = STATE_WRITE else '0';
+     output_counter_enable_s <= '1' when state_s = STATE_WRITE or state_s = STATE_POPULATE_ALU else '0';
 
     new_state_s <= STATE_NONE       when init_s /= 5
-              else STATE_DONE       when (state_s = STATE_WRITE and output_counter_done_s = '1' and ((stride_in = STRIDE_ONE and num_lines_read_s = 256) or (stride_in = STRIDE_TWO and num_lines_read_s = 255)))
-              else STATE_WRITE      when (state_s = STATE_NONE and init_s = 5)
+              else STATE_FLUSH_ALU  when (state_s = STATE_WRITE and output_counter_done_s = '1' and ((stride_in = STRIDE_ONE and num_lines_read_s = 256) or (stride_in = STRIDE_TWO and num_lines_read_s = 255)))
+              else STATE_DONE       when (state_s = STATE_FLUSH_ALU and num_flush_cylces = NUM_PIPELINE_STAGES)
+              else STATE_POPULATE_ALU when (state_s = STATE_NONE and init_s = 5)
+              else STATE_WRITE      when (state_s = STATE_POPULATE_ALU and num_population_cycles = NUM_PIPELINE_STAGES)
                                       or (state_s = STATE_READ and stride_in = STRIDE_ONE and input_counter_done_s = '1')
                                       or (state_s = STATE_READ_AGAIN and stride_in = STRIDE_TWO and input_counter_done_s = '1')
               else STATE_READ       when (state_s = STATE_WRITE and output_counter_done_s = '1')
@@ -121,16 +125,38 @@ begin
         end if;
     end process;
 
+    Num_ALU_Population_Logic : process(clk_c, reset_in, state_s)
+    begin
+        if(reset_in = '1') then
+            num_population_cycles <= 0;
+        elsif (rising_edge(clk_c)) then
+            if(state_s = STATE_POPULATE_ALU) then
+                num_population_cycles <= num_population_cycles+1;
+            end if;
+        end if;
+    end process;
+
+    Num_ALU_FLUSH_Logic : process(clk_c, reset_in, state_s)
+    begin
+        if(reset_in = '1') then
+            num_flush_cylces <= 0;
+        elsif (rising_edge(clk_c)) then
+            if(state_s = STATE_FLUSH_ALU) then
+                num_flush_cylces <= num_flush_cylces+1;
+            end if;
+        end if;
+    end process;
+
     data_cache_output_window_index_out <= output_window_index_s;
     data_cache_input_window_row_index_out <= input_window_row_index_s;
     data_cache_enable_out <= output_counter_enable_s or input_counter_enable_s;
     data_cache_read_write_out <= WRITE_OPERATION when input_counter_enable_s = '1' else
                                  READ_OPERATION when output_counter_enable_s = '1' else 'Z';
-    dma_enable_out <= output_counter_enable_s or input_counter_enable_s or filter_counter_enable_s;
+    dma_enable_out <='1' when (output_counter_enable_s = '1' and state_s /= STATE_POPULATE_ALU) or input_counter_enable_s = '1' or filter_counter_enable_s ='1' or  state_s = STATE_FLUSH_ALU  else '0';
     dma_read_write_out <= READ_OPERATION when input_counter_enable_s = '1' or filter_counter_enable_s = '1' else
-                          WRITE_OPERATION when output_counter_enable_s = '1' else 'Z';
+                          WRITE_OPERATION when output_counter_enable_s = '1' or state_s = STATE_FLUSH_ALU  else 'Z';
     filter_cache_enable_out <= '1' when filter_counter_enable_s = '1' else '0';
-    alu_enable_out <= output_counter_enable_s;
+    alu_enable_out <= '1' when  output_counter_enable_s = '1' or state_s = STATE_FLUSH_ALU else '0';
     done_out <= '1' when state_s =  STATE_DONE else '0';
     
 end architecture cu_arch; --cu_arch

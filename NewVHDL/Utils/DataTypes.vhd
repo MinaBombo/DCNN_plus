@@ -43,12 +43,15 @@ package DataTypes is
     constant SELECT_SHADOW_ADDRESS : std_logic := '0';
 
     constant STATE_NONE : integer := 0;
-    constant STATE_WRITE : integer := 1;
-    constant STATE_READ : integer := 2;
-    constant STATE_READ_AGAIN : integer := 3;
-    constant STATE_DONE : integer := 4;
-
+    constant STATE_POPULATE_ALU : integer := 1;
+    constant STATE_WRITE : integer := 2;
+    constant STATE_READ : integer := 3;
+    constant STATE_READ_AGAIN : integer := 4;
+    constant STATE_FLUSH_ALU : integer := 5;
+    constant STATE_DONE : integer := 6;
+    
     constant INSTRUCTION_CONVOLVE : std_logic := '0';
     constant INSTRUCTION_POLL : std_logic := '1';
+    constant NUM_PIPELINE_STAGES : integer := 8;
 
 end package DataTypes;

@@ -15,9 +15,8 @@ end entity RAM;
 
 architecture ram_arch of RAM is
 -- Ram size = 256*256*2 + 5*5
-type ram_t is array(131097 downto 0) of byte_t;
+type ram_t is array(129069 downto 0) of byte_t;
 signal ram_memory_s : ram_t;
-signal ram_write_selection_s : std_logic_vector(131097 downto 0);
 begin
     Data_Out_Generate: for i in 0  to 4 generate
         data_out(i) <= ram_memory_s(address_in+i);
