@@ -45,7 +45,7 @@ begin
                multiplied_window_in(4)(4);
 
     shift_amount_s <= 3 when filter_size_in = FILTER_SIZE_THREE else 5;
-    pixel_out <= to_integer(shift_right(to_signed(pixel_s,21) , shift_amount_s)) rem 256 when instruction_in = INSTRUCTION_POLL else  pixel_s rem 256 ;
+    pixel_out <= to_integer(shift_right(to_signed(pixel_s,21) , shift_amount_s)) mod 128 when instruction_in = INSTRUCTION_POLL else  pixel_s mod 128 ;
 
 
 end architecture adder_arch;
